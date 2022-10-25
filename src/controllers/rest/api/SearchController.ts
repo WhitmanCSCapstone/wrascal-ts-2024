@@ -1,11 +1,12 @@
 import { Controller, Inject, Injectable } from "@tsed/di";
-import { Description, Example, Get, Post, Returns, Summary } from "@tsed/schema";
+import {Description, Example, Get, Post, Returns, Schema, Summary} from "@tsed/schema";
 import { POSTGRES_DATA_SOURCE } from "../../../datasources/PostgresDatasource";
 import { DataSource } from "typeorm";
 import { BodyParams } from "@tsed/platform-params";
 import { Constant } from "../../../datasources/entities/Constant";
 import { BadRequest } from "@tsed/exceptions";
 import { LigandSearchResult, LigandSearchResultSchema } from "../../../models/LigandSearchResult";
+import {AdvanceSearchRequestModel, AdvanceSearchRequestModelSchema} from "../../../models/AdvanceSearchRequestModel";
 
 @Injectable()
 @Controller("/db")
@@ -42,8 +43,8 @@ export class SearchController {
       .getRawMany<LigandSearchResult>();
   }
 
-  @Get("/search/advance")
-  advanceSearch() {
+  @Post("/search/advance")
+  advanceSearch(@BodyParams() @Schema(AdvanceSearchRequestModelSchema) searchReq: AdvanceSearchRequestModel): Promise<string> {
     return "";
   }
 
