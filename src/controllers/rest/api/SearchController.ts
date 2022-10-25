@@ -24,7 +24,7 @@ export class SearchController {
   @Returns(200, LigandSearchResult).Description("Ligand search result").Schema(LigandSearchResultSchema)
   @Summary("Perform a search using ligand.")
   @Description("Perform a search using ligand, returns an array of search result. Can have multiple ligand keywords at same time.")
-  async searchByLigand(@BodyParams() @Example('["EDTA"]') ligands: string[]): Promise<LigandSearchResult[]> {
+  async searchByLigand(@BodyParams() @Example(["EDTA"]) ligands: string[]): Promise<LigandSearchResult[]> {
     if (ligands.length === 0) throw new BadRequest("POST Body is empty.");
 
     const ligandsStr = ligands.join("%");
