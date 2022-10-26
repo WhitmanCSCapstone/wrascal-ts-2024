@@ -1,30 +1,37 @@
-import {number, object, string} from "@tsed/schema";
+import { number, object, string } from "@tsed/schema";
 
-export class AdvanceSearchRequestModel{
-    ligand: string;
-    metal: string;
-    category: string;
-    ligandCharge: number;
-    metalCharge: number;
-    chemical: string;
+export class AdvanceSearchRequestModel {
+  ligands?: string[];
+  metals?: string[];
+  categories?: string[];
+  ligandCharges?: number[];
+  metalCharges?: number[];
+  chemicals?: string[];
 
-    constructor(ligand: string, metal: string,
-                category: string, ligandCharge: number,
-                metalCharge: number, chemical: string) {
-        this.ligand = ligand;
-        this.metal = metal;
-        this.category = category;
-        this.ligandCharge = ligandCharge;
-        this.metalCharge = metalCharge;
-        this.chemical = chemical;
-    }
+  constructor(
+    ligands: string[],
+    metals: string[] = [],
+    categories: string[] = [],
+    ligandCharges: number[] = [],
+    metalCharges: number[] = [],
+    chemicals: string[] = []
+  ) {
+    this.ligands = ligands;
+    this.metals = metals;
+    this.categories = categories;
+    this.ligandCharges = ligandCharges;
+    this.metalCharges = metalCharges;
+    this.chemicals = chemicals;
+  }
 }
 
-export const AdvanceSearchRequestModelSchema = object({
-    ligand: string().description(""),
-    metal: string().description(""),
-    category: string().description(""),
-    ligandCharge: number().description(""),
-    metalCharge: number().description(""),
-    chemical: string().description("")
+export const AdvanceSearchRequestSchema = object({
+  ligands: string().description(""),
+  metals: string().description(""),
+  categories: string().description(""),
+  ligandCharges: number().description(""),
+  metalCharges: number().description(""),
+  chemicals: string().description("")
 });
+
+export const AdvanceSearchRequestExample = new AdvanceSearchRequestModel(["EDTA"], ["H"]);

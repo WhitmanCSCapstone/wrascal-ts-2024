@@ -1,64 +1,71 @@
-export default class StringUtils{
-    public static parsePgArray(str: string): string[]{
-        str = str.replace('{', '').replace('}', '');
+export default class StringUtils {
+  public static parsePgArray(str: string): string[] {
+    str = str.replace("{", "").replace("}", "");
 
-        if(str.length === 0) return [];
+    if (str.length === 0) return [];
 
-        const result = [];
-        let contents = str.split(',');
+    const result = [];
+    let contents = str.split(",");
 
-        for(let i = 0; i < contents.length; i++){
-            if(contents[i].startsWith('""'))
-                contents[i] = contents[i].substring(2);
-            if(contents[i].endsWith('""'))
-                contents[i] = contents[i].substring(0, contents[i].length - 2);
-        }
-
-        while(contents.length !== 0){
-            let chunkResult = contents[0];
-            contents = contents.slice(1);
-
-            while(!contents[0].endsWith(')')){
-                chunkResult += `,${contents[0]}`;
-                contents = contents.slice(1);
-            }
-
-            chunkResult += `,${contents[0]}`;
-            contents = contents.slice(1);
-            result.push(chunkResult);
-        }
-
-        return result;
+    let prevHasSym = false;
+    for (let i = 0; i < contents.length; i++) {
+      if (contents[i].startsWith('""')) contents[i] = contents[i].substring(2);
+      if (contents[i].endsWith('""')) contents[i] = contents[i].substring(0, contents[i].length - 2);
+      if (contents[i].startsWith('"')) {
+        prevHasSym = true;
+        contents[i] = contents[i].substring(1);
+      }
+      if (contents[i].endsWith('"') && prevHasSym) {
+        contents[i] = contents[i].substring(0, contents[i].length - 1);
+        prevHasSym = false;
+      }
     }
 
-    public static parsePgObject(str: string): string[]{
-        str = str.substring(1).substring(0, str.length - 2);
+    while (contents.length !== 0) {
+      let chunkResult = contents[0];
+      contents = contents.slice(1);
 
-        if(str.length === 0) return [];
+      while (!contents[0].endsWith(")")) {
+        chunkResult += `,${contents[0]}`;
+        contents = contents.slice(1);
+      }
 
-        const result = [];
-        let contents = str.split(',');
+      chunkResult += `,${contents[0]}`;
+      contents = contents.slice(1);
+      result.push(chunkResult);
+    }
 
-        while(contents.length !== 0){
-            let chunkResult = contents[0];
+    return result;
+  }
 
-            if(chunkResult[0] === '"' && (!chunkResult.endsWith('"') || chunkResult.endsWith('""'))){
-                contents = contents.slice(1);
-                while(!contents[0].endsWith('"') || contents[0].endsWith('""')){
-                    chunkResult += `,${contents[0]}`;
-                    contents = contents.slice(1);
-                }
+  public static parsePgObject(str: string): string[] {
+    str = str.substring(1).substring(0, str.length - 2);
 
-                chunkResult += `,${contents[0]}`;
-                contents = contents.slice(1);
-                result.push(chunkResult);
-                continue;
-            }
+    if (str.length === 0) return [];
 
-            result.push(chunkResult);
-            contents = contents.slice(1);
+    const result = [];
+    let contents = str.split(",");
+
+    while (contents.length !== 0) {
+      let chunkResult = contents[0];
+
+      if (chunkResult[0] === '"' && (!chunkResult.endsWith('"') || chunkResult.endsWith('""'))) {
+        contents = contents.slice(1);
+        while (!contents[0].endsWith('"') || contents[0].endsWith('""')) {
+          chunkResult += `,${contents[0]}`;
+          contents = contents.slice(1);
         }
 
-        return result;
+        chunkResult += `,${contents[0]}`;
+        contents = contents.slice(1);
+        result.push(chunkResult);
+        continue;
+      }
+
+      result.push(chunkResult);
+      contents = contents.slice(1);
     }
+
+    return result;
+  }
 }
