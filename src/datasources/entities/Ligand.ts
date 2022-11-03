@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import StringUtils from "../../utils/StringUtils";
 
 export enum Element {
   H = "H",
@@ -132,13 +131,13 @@ export class MolecularFormulaEntry {
   }
 
   public static fromStr(str: string): MolecularFormulaEntry {
-    const [elementStr, countStr] = StringUtils.parsePgObject(str);
-    const element = elementStr as Element;
-    const count = +countStr;
+    const [atomStr, atomCountStr] = str.substring(1, str.length - 1).split(",");
+    const element = atomStr as Element;
+    const atomCount = +atomCountStr;
 
-    if (isNaN(count)) throw new TypeError(`invalid amount in record count: [${countStr}]`);
+    if (isNaN(atomCount)) throw new TypeError(`invalid amount in record atomCount: [${atomStr}][${atomCountStr}]`);
 
-    return new MolecularFormulaEntry(element, count);
+    return new MolecularFormulaEntry(element, atomCount);
   }
 
   public static toStr(obj: MolecularFormulaEntry): string {
@@ -156,17 +155,22 @@ export class MolecularFormula {
   }
 
   public static fromStr(str: string): MolecularFormula {
-    const [atomsStr, chargeStr] = StringUtils.parsePgObject(str);
-    const charge = +chargeStr;
-
-    if (isNaN(charge)) throw new TypeError(`invalid amount in record charge: [${chargeStr}]`);
-
-    const atomsStrArr = StringUtils.parsePgArray(atomsStr.substring(1, atomsStr.length - 1));
     const atoms: MolecularFormulaEntry[] = [];
+    const regex = /\([a-zA-Z]+,\d+\)/g;
 
-    atomsStrArr.forEach(function (str) {
-      atoms.push(MolecularFormulaEntry.fromStr(str));
+    if (!str) return new MolecularFormula(atoms, -1);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    [...str.matchAll(regex)].forEach((match, i) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      match.forEach((value, j) => {
+        atoms.push(MolecularFormulaEntry.fromStr(value));
+      });
     });
+
+    const charge = +(str.split(",").at(-1)?.replace(")", "") ?? "");
+
+    if (isNaN(charge)) throw new TypeError(`invalid amount in record charge`);
 
     return new MolecularFormula(atoms, charge);
   }
@@ -193,7 +197,9 @@ export class LigandForm {
   }
 
   public static fromStr(str: string): LigandForm {
-    const [protonationStr, chargeStr] = StringUtils.parsePgObject(str);
+    str = str.substring(1, str.length - 1);
+
+    const [protonationStr, chargeStr] = str.split(",");
     const protonation = +protonationStr;
     const charge = +chargeStr;
 
@@ -252,7 +258,7 @@ export class Ligand {
   @Column("text", {
     transformer: {
       from(value: string): string[] {
-        return StringUtils.parsePgArray(value);
+        return value.substring(1, value.length - 1).split(",");
       },
       to(value: string[]): string {
         const str = value.join(",");

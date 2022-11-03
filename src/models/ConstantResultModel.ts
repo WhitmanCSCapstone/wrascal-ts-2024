@@ -50,6 +50,28 @@ export const ConstantResultRawModelSchema = object({
   notes: string()
 });
 
+export const ConstantResultModelSchema = object({
+  name: string(),
+  ligand_charge: number(),
+  metal_charge: number(),
+  value: number(),
+  significant_figures: number(),
+  categories: array().type(string),
+  central_element: string(),
+  constant_kind: string(),
+  temperature: number(),
+  temperature_varies: boolean(),
+  ionic_strength: number(),
+  expression_string: string(),
+  direction: string(),
+  magnitude: number(),
+  protonation: number(),
+  molecular_formula: object().type(MolecularFormula),
+  products: array().type(ExpressionEntry),
+  reactants: array().type(ExpressionEntry),
+  notes: array().type(Note)
+});
+
 export class ConstantResultModel extends ConstantResultModelBase {
   molecular_formula: MolecularFormula;
   products: ExpressionEntry[];

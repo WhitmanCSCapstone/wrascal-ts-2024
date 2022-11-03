@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import StringUtils from "../../utils/StringUtils";
 
 export enum NoteType {
   Solid = "Solid",
@@ -28,7 +27,10 @@ export class Note {
   }
 
   public static fromStr(str: string): Note {
-    const [typeStr, content] = StringUtils.parsePgObject(str);
+    str = str.substring(1, str.length - 1);
+
+    const typeStr = str.split(",")[0];
+    const content = str.substring(`${typeStr},`.length);
     const type = typeStr as NoteType;
 
     return new Note(type, content);
@@ -43,12 +45,18 @@ export class Note {
   }
 }
 
-export function toNoteArray(value: string): Note[] {
-  const array = StringUtils.parsePgArray(value);
+export function toNoteArray(str: string): Note[] {
   const result: Note[] = [];
+  const regex = /\([a-zA-Z]+,(?:[-0-9a-zA-Z]|".+")*\)/g;
 
-  array.forEach(function (str) {
-    result.push(Note.fromStr(str));
+  if (!str) return result;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  [...str.matchAll(regex)].forEach((match, i) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    match.forEach((value, j) => {
+      result.push(Note.fromStr(value));
+    });
   });
 
   return result;

@@ -18,7 +18,7 @@ import {
 } from "../../../models/AdvanceSearchRequestModel";
 import ArrayUtils from "../../../utils/ArrayUtils";
 import { ConstantRequestExample, ConstantRequestModel, ConstantRequestSchema } from "../../../models/ConstantRequestModel";
-import { ConstantResultRawModel, ConstantResultRawModelSchema } from "../../../models/ConstantResultModel";
+import { ConstantResultModel, ConstantResultModelSchema, ConstantResultRawModel } from "../../../models/ConstantResultModel";
 
 @Injectable()
 @Controller("/db")
@@ -116,7 +116,7 @@ export class SearchController {
   }
 
   @Post("/constants")
-  @Returns(200, ConstantResultRawModel).Description("Constants result").Schema(ConstantResultRawModelSchema)
+  @Returns(200, ConstantResultModel).Description("Constants result").Schema(ConstantResultModelSchema)
   @Summary("Get details based on ids of metal and ligand")
   @Description("Get details based on ids of metal and ligand, returns an array of results.")
   async getConstants(
@@ -124,7 +124,7 @@ export class SearchController {
     @Schema(ConstantRequestSchema)
     @Example(ConstantRequestExample)
     constReq: ConstantRequestModel
-  ): Promise<ConstantResultRawModel[]> {
+  ): Promise<ConstantResultModel[]> {
     const withQuery = this.dataSource
       .getRepository(Constant)
       .createQueryBuilder()
@@ -142,15 +142,7 @@ export class SearchController {
       .andWhere(`metal_id = ${constReq.metalId}`)
       .getQuery();
 
-    /*
-    const result: ConstantResultModel[] = [];
-
-    resultRaw.forEach(r => {
-      result.push(ConstantResultModel.fromRaw(r));
-    });
-    */
-
-    return await this.dataSource
+    const resultRaw = await this.dataSource
       .createQueryBuilder()
       .addCommonTableExpression(withQuery, "table_ids")
       .select([
@@ -182,5 +174,13 @@ export class SearchController {
       .leftJoin("footnotes", "footnotes", "footnotes.id = table_ids.footnote_id")
       .leftJoin("conditions", "conditions", "conditions.id = table_ids.conditions_id")
       .getRawMany<ConstantResultRawModel>();
+
+    const result: ConstantResultModel[] = [];
+
+    resultRaw.forEach((r) => {
+      result.push(ConstantResultModel.fromRaw(r));
+    });
+
+    return result;
   }
 }

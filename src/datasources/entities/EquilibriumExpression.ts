@@ -1,13 +1,16 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import StringUtils from "../../utils/StringUtils";
 import { ColumnCommonOptions } from "typeorm/decorator/options/ColumnCommonOptions";
 
-export function toExpressionArray(value: string): ExpressionEntry[] {
-  const array = StringUtils.parsePgArray(value);
+export function toExpressionArray(str: string): ExpressionEntry[] {
   const result: ExpressionEntry[] = [];
+  const regex = /\((?:[a-zA-Z0-9]+|".+"),\d+\)/g;
 
-  array.forEach(function (str) {
-    result.push(ExpressionEntry.fromStr(str));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  [...str.matchAll(regex)].forEach((match, i) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    match.forEach((value, j) => {
+      result.push(ExpressionEntry.fromStr(value));
+    });
   });
 
   return result;
@@ -42,12 +45,12 @@ export class ExpressionEntry {
   }
 
   public static fromStr(str: string): ExpressionEntry {
-    const [species, equivalents] = StringUtils.parsePgObject(str);
+    const [speciesStr, equivalentsStr] = str.substring(1, str.length - 1).split(",");
 
-    const equivalentsNum = +equivalents;
-    if (isNaN(equivalentsNum)) throw new TypeError(`invalid amount in record equivalents: [${equivalents}]`);
+    const equivalentsNum = +equivalentsStr;
+    if (isNaN(equivalentsNum)) throw new TypeError(`invalid amount in record equivalents: [${equivalentsStr}]`);
 
-    return new ExpressionEntry(species.replace('"', ""), equivalentsNum);
+    return new ExpressionEntry(speciesStr.replace('"', ""), equivalentsNum);
   }
 
   public static toStr(obj: ExpressionEntry): string {
