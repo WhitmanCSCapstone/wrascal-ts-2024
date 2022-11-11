@@ -3,4 +3,5 @@
  */
 
 export * from "./HelloWorldController";
+export * from "./api/ReferenceController";
 export * from "./api/SearchController";
