@@ -30,6 +30,7 @@ export class ReferenceController {
     return await this.dataSource
       .getRepository(Literature)
       .createQueryBuilder()
+      .distinct()
       .select(`"Literature"."LitAlt_ID"`, "litAltId")
       .addSelect(`"Literature"."LitID"`, "litId")
       .addSelect(`"Literature"."LItRef"`, "reference")
