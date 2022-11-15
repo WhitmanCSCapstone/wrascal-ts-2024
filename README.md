@@ -25,14 +25,14 @@
 
 ```batch
 # install dependencies
-$  install
+$ yarn install
 
 # serve
-$  start
+$ yarn start
 
 # build for production
-$  build
-$  start:prod
+$ yarn build
+$ yarn start:prod
 ```
 
 ## Docker
