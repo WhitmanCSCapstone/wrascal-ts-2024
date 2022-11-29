@@ -22,7 +22,7 @@ const errMessages: Record<number, string> = {
   500: "Internal Server Error. Wait and try again.",
   502: "Service Unavailable. Wait and try again."
 };
-const apiKeys = ["WTGGGNDksbbk7P8JRBiwBGvTnU6EiWd6"];
+const apiKeys = ["WTGGGNDksbbk7P8JRBiwBGvTnU6EiWd6", "93aLDMvd2AcG5eLn88mGDYzHZveuUnTV"];
 
 @Controller("/rsc")
 export class ChemSpiderController {
