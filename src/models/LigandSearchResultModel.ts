@@ -31,5 +31,5 @@ export const LigandAdvanceSearchResultSchema = object({
   ligand_id: number().description("Unique ID of ligand"),
   metal_id: number().description("Unique ID of metal"),
   molecular_formula: string().description("Formula of the molecular"),
-  categories: array().type(string).description("Categories")
+  categories: array().items(string()).description("Categories")
 });

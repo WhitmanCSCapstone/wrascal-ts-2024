@@ -1,5 +1,5 @@
 import { Controller } from "@tsed/di";
-import { Description, Example, Get, Post, Returns, Summary } from "@tsed/schema";
+import { array, Description, Example, Get, Post, Returns, Summary } from "@tsed/schema";
 import { BodyParams, PathParams } from "@tsed/platform-params";
 import { BadRequest } from "@tsed/exceptions";
 import axios from "axios";
@@ -34,7 +34,7 @@ export class ChemSpiderController {
 
   @Get("/search/:name")
   @Returns(400).Description("Invalid Chem name")
-  @Returns(200, ChemSearchResultModel).Description("All the search result with given name.").Schema(ChemSearchResultSchema)
+  @Returns(200, ChemSearchResultModel).Description("All the search result with given name.").Schema(array().items(ChemSearchResultSchema))
   @Summary("Search compounds using name")
   @Description("Search compounds using name, returns an array of result.")
   async searchByName(@PathParams("name") @Example("EDTA") name?: string): Promise<ChemSearchResultModel[]> {
@@ -45,7 +45,7 @@ export class ChemSpiderController {
 
   @Post("/search/:name")
   @Returns(400).Description("Invalid Chem name")
-  @Returns(200, ChemSearchResultModel).Description("All the search result with given name.").Schema(ChemSearchResultSchema)
+  @Returns(200, ChemSearchResultModel).Description("All the search result with given name.").Schema(array().items(ChemSearchResultSchema))
   @Summary("Search compounds using name with custom image dimensions")
   @Description("Search compounds using name with custom image dimensions, returns an array of result.")
   async searchByNameWithDimension(

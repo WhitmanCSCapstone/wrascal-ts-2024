@@ -1,6 +1,6 @@
-import { MolecularFormula } from "../datasources/entities/Ligand";
-import { ExpressionEntry, toExpressionArray } from "../datasources/entities/EquilibriumExpression";
-import { Note, toNoteArray } from "../datasources/entities/Footnote";
+import { MolecularFormula, MolecularFormulaSchema } from "../datasources/entities/Ligand";
+import { ExpressionEntry, ExpressionEntrySchema, toExpressionArray } from "../datasources/entities/EquilibriumExpression";
+import { Note, NoteSchema, toNoteArray } from "../datasources/entities/Footnote";
 import { array, boolean, number, object, string } from "@tsed/schema";
 
 export class ConstantResultModelBase {
@@ -34,7 +34,7 @@ export const ConstantResultRawModelSchema = object({
   metal_charge: number(),
   value: number(),
   significant_figures: number(),
-  categories: array().type(string),
+  categories: array().items(string()),
   central_element: string(),
   constant_kind: string(),
   temperature: number(),
@@ -56,7 +56,7 @@ export const ConstantResultModelSchema = object({
   metal_charge: number(),
   value: number(),
   significant_figures: number(),
-  categories: array().type(string),
+  categories: array().items(string()),
   central_element: string(),
   constant_kind: string(),
   temperature: number(),
@@ -66,10 +66,10 @@ export const ConstantResultModelSchema = object({
   direction: string(),
   magnitude: number(),
   protonation: number(),
-  molecular_formula: object().type(MolecularFormula),
-  products: array().type(ExpressionEntry),
-  reactants: array().type(ExpressionEntry),
-  notes: array().type(Note)
+  molecular_formula: MolecularFormulaSchema,
+  products: array().items(ExpressionEntrySchema),
+  reactants: array().items(ExpressionEntrySchema),
+  notes: array().items(NoteSchema)
 });
 
 export class ConstantResultModel extends ConstantResultModelBase {

@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { ColumnCommonOptions } from "typeorm/decorator/options/ColumnCommonOptions";
+import { number, object, string } from "@tsed/schema";
 
 export function toExpressionArray(str: string): ExpressionEntry[] {
   const result: ExpressionEntry[] = [];
@@ -34,6 +35,11 @@ export default function ExpressionEntryParserConfig(): ColumnCommonOptions {
     }
   };
 }
+
+export const ExpressionEntrySchema = object({
+  species: string(),
+  equivalents: number()
+});
 
 export class ExpressionEntry {
   species: string;
