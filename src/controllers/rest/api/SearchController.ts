@@ -116,7 +116,9 @@ export class SearchController {
     const rawResult = await query.getRawMany<LigandAdvanceSearchRawResult>();
     const result: LigandAdvanceSearchResultModel[] = [];
 
-    for (const raw of rawResult) result.push(LigandAdvanceSearchResultModel.fromRaw(raw));
+    rawResult.forEach((r) => {
+      result.push(LigandAdvanceSearchResultModel.fromRaw(r));
+    });
 
     return result;
   }
