@@ -6,7 +6,8 @@ import { BodyParams } from "@tsed/platform-params";
 import { Constant } from "../../../datasources/entities/Constant";
 import { BadRequest } from "@tsed/exceptions";
 import {
-  LigandAdvanceSearchResult,
+  LigandAdvanceSearchRawResult,
+  LigandAdvanceSearchResultModel,
   LigandAdvanceSearchResultSchema,
   LigandSearchResultModel,
   LigandSearchResultSchema
@@ -58,7 +59,7 @@ export class SearchController {
 
   @Post("/search/advance")
   @Returns(400).Description("Ligands field should have at least 1 element")
-  @Returns(200, LigandAdvanceSearchResult).Description("Advance search result").Schema(array().items(LigandAdvanceSearchResultSchema))
+  @Returns(200, LigandAdvanceSearchResultModel).Description("Advance search result").Schema(array().items(LigandAdvanceSearchResultSchema))
   @Summary("Perform a advance search using multiple fields")
   @Description("Perform a advance search using multiple fields, returns an array of search result.")
   async advanceSearch(
@@ -66,7 +67,7 @@ export class SearchController {
     @Schema(AdvanceSearchRequestSchema)
     @Example(AdvanceSearchRequestExample)
     searchReq: AdvanceSearchRequestModel
-  ): Promise<LigandAdvanceSearchResult[]> {
+  ): Promise<LigandAdvanceSearchResultModel[]> {
     if (!ArrayUtils.any(searchReq.ligands)) throw new BadRequest("Ligands field should have at least 1 element");
 
     // eslint-disable-next-line
@@ -112,7 +113,12 @@ export class SearchController {
       query = query.andWhere(`(molecular_formula).atom_counts @> ARRAY[${chemicalStr}]::molecularformulaentry[]`);
     }
 
-    return await query.getRawMany<LigandAdvanceSearchResult>();
+    const rawResult = await query.getRawMany<LigandAdvanceSearchRawResult>();
+    const result: LigandAdvanceSearchResultModel[] = [];
+
+    for (const raw of rawResult) result.push(LigandAdvanceSearchResultModel.fromRaw(raw));
+
+    return result;
   }
 
   @Post("/constants")
