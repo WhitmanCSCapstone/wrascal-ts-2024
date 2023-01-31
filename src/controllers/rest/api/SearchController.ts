@@ -35,7 +35,7 @@ export class SearchController {
 
   @Post("/search/ligand")
   @Returns(400).Description("POST Body is empty")
-  @Returns(200, LigandSearchResultModel).Description("Ligand search result").Schema(array().items(LigandSearchResultSchema))
+  @Returns(200, [LigandSearchResultModel]).Description("Ligand search result").Schema(array().items(LigandSearchResultSchema))
   @Summary("Perform a search using ligand")
   @Description("Perform a search using ligand, returns an array of search result. Can have multiple ligand keywords at same time.")
   async searchByLigand(@BodyParams() @Example(["EDTA"]) ligands: string[]): Promise<LigandSearchResultModel[]> {
@@ -59,7 +59,9 @@ export class SearchController {
 
   @Post("/search/advance")
   @Returns(400).Description("Ligands field should have at least 1 element")
-  @Returns(200, LigandAdvanceSearchResultModel).Description("Advance search result").Schema(array().items(LigandAdvanceSearchResultSchema))
+  @Returns(200, [LigandAdvanceSearchResultModel])
+    .Description("Advance search result")
+    .Schema(array().items(LigandAdvanceSearchResultSchema))
   @Summary("Perform a advance search using multiple fields")
   @Description("Perform a advance search using multiple fields, returns an array of search result.")
   async advanceSearch(
@@ -124,7 +126,7 @@ export class SearchController {
   }
 
   @Post("/constants")
-  @Returns(200, ConstantResultModel).Description("Constants result").Schema(array().items(ConstantResultModelSchema))
+  @Returns(200, [ConstantResultModel]).Description("Constants result").Schema(array().items(ConstantResultModelSchema))
   @Summary("Get details based on ids of metal and ligand")
   @Description("Get details based on ids of metal and ligand, returns an array of results.")
   async getConstants(

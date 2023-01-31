@@ -21,7 +21,7 @@ export class ReferenceController {
 
   @Get("/get/:ligandId")
   @Returns(400).Description("Invalid Ligand Id")
-  @Returns(200, ReferenceFetchResultModel)
+  @Returns(200, [ReferenceFetchResultModel])
     .Description("All the references for the given ligand ID.")
     .Schema(array().items(ReferenceFetchResultSchema))
   @Summary("Fetch all the references using a given ligand ID.")
