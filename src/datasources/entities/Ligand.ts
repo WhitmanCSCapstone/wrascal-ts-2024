@@ -172,9 +172,9 @@ export class MolecularFormula {
     if (!str) return new MolecularFormula(atoms, -1);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    [...str.matchAll(regex)].forEach((match, i) => {
+    [...str.matchAll(regex)].forEach((match, _) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      match.forEach((value, j) => {
+      match.forEach((value, _) => {
         atoms.push(MolecularFormulaEntry.fromStr(value));
       });
     });
@@ -266,17 +266,6 @@ export class Ligand {
   })
   form?: LigandForm;
 
-  @Column("text", {
-    transformer: {
-      from(value: string): string[] {
-        return value.substring(1, value.length - 1).split(",");
-      },
-      to(value: string[]): string {
-        const str = value.join(",");
-
-        return `{${str}}`;
-      }
-    }
-  })
+  @Column("text")
   categories!: string[];
 }

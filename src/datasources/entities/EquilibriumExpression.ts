@@ -7,9 +7,9 @@ export function toExpressionArray(str: string): ExpressionEntry[] {
   const regex = /\((?:[a-zA-Z0-9]+|".+"),\d+\)/g;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  [...str.matchAll(regex)].forEach((match, i) => {
+  [...str.matchAll(regex)].forEach((match, _) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    match.forEach((value, j) => {
+    match.forEach((value, _) => {
       result.push(ExpressionEntry.fromStr(value));
     });
   });

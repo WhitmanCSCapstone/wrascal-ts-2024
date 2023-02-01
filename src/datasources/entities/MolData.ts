@@ -10,4 +10,7 @@ export class MolData {
 
   @Column({ name: "MolDrawCode" })
   drawCode!: string;
+
+  @Column()
+  name!: string;
 }

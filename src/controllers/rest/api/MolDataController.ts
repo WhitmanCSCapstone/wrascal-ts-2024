@@ -1,13 +1,12 @@
 import { Controller, Inject, Injectable } from "@tsed/di";
 import { POSTGRES_DATA_SOURCE } from "../../../datasources/PostgresDatasource";
-import { DataSource, In } from "typeorm";
-import { MolDataResultModel, MolDataResultModelSchema } from "../../../models/MolDataResultModel";
+import { DataSource } from "typeorm";
+import { MolDataRawResultModel, MolDataResultModelSchema } from "../../../models/MolDataResultModel";
 import { array, Description, Example, Get, Post, Returns, Summary } from "@tsed/schema";
 import { BodyParams, PathParams } from "@tsed/platform-params";
 import { BadRequest, NotFound } from "@tsed/exceptions";
 import { MolData } from "../../../datasources/entities/MolData";
 import ArrayUtils from "../../../utils/ArrayUtils";
-import MolUtils from "../../../utils/MolUtils";
 
 @Injectable()
 @Controller("/mol")
@@ -23,46 +22,48 @@ export class MolDataController {
 
   @Get("/get/:ligandId")
   @Returns(400).Description("Invalid Ligand Id")
-  @Returns(200, MolDataResultModel).Description("The draw code information for the requested ID").Schema(MolDataResultModelSchema)
+  @Returns(200, MolDataRawResultModel).Description("The draw code information for the requested ID").Schema(MolDataResultModelSchema)
   @Summary("Fetch all the draw code using a given ligand ID.")
   @Description("Fetch all the draw code using a given ligand ID, returns an array of result.")
-  async getMolImage(@PathParams("ligandId") @Example(412) ligandId: number): Promise<MolDataResultModel> {
+  async getMolImage(@PathParams("ligandId") @Example(412) ligandId: number): Promise<MolDataRawResultModel> {
     if (ligandId <= 0) throw new BadRequest("Invalid Ligand Id.");
 
-    ligandId = MolUtils.getNewLigandMapping(ligandId);
+    const result = await this.getDrawCodes([ligandId]);
 
-    const queryResult = await this.dataSource.getRepository(MolData).findOneBy({
-      id: ligandId
-    });
+    if (!ArrayUtils.any(result)) throw new NotFound("Request resource not found.");
 
-    if (!queryResult) throw new NotFound(`Draw code requested by ID [${ligandId}] is not found.`);
-
-    return MolDataResultModel.fromRaw(queryResult);
+    return result[0];
   }
 
   @Post("/get")
   @Returns(400).Description("Invalid Ligand Ids")
-  @Returns(200, [MolDataResultModel])
+  @Returns(200, [MolDataRawResultModel])
     .Description("The draw code information for the requested ID")
     .Schema(array().items(MolDataResultModelSchema))
   @Summary("Fetch all the draw codes using a given ligand ID.")
   @Description("Fetch all the draw codes using a given ligand ID, returns an array of result.")
-  async getMolImages(@BodyParams() @Example([412, 413]) ligandIds: number[]): Promise<MolDataResultModel[]> {
+  async getMolImages(@BodyParams() @Example([412, 3559, 3560, 3561, 3562]) ligandIds: number[]): Promise<MolDataRawResultModel[]> {
     if (!ArrayUtils.any(ligandIds)) throw new BadRequest("Invalid Ligand Ids.");
 
     ligandIds = [...new Set(ligandIds)];
-    ligandIds = ligandIds.map((val) => MolUtils.getNewLigandMapping(val));
 
-    const queryResult = await this.dataSource.getRepository(MolData).findBy({
-      id: In(ligandIds)
-    });
+    return await this.getDrawCodes(ligandIds);
+  }
 
-    if (!ArrayUtils.any(queryResult)) throw new NotFound(`Draw codes requested by IDs are not found.`);
+  private async getDrawCodes(ids: number[]): Promise<MolDataRawResultModel[]> {
+    const queryResult = await this.dataSource
+      .getRepository(MolData)
+      .createQueryBuilder()
+      .select(`"MolData"."MoleculeID"`, "molId")
+      .addSelect("ligands.name", "name")
+      .addSelect("ligands.id", "id")
+      .addSelect(`"MolData"."MolDrawCode"`, "drawCode")
+      .innerJoin("ligands", "ligands", `ligands.name = "MolData"."name"`)
+      .where(`ligands.id IN (${ids.join(",")})`)
+      .getRawMany<MolDataRawResultModel>();
 
-    const result: MolDataResultModel[] = [];
+    if (!ArrayUtils.any(queryResult)) return [];
 
-    for (const mol of queryResult) result.push(MolDataResultModel.fromRaw(mol));
-
-    return result;
+    return queryResult.map((val) => MolDataRawResultModel.decode(val));
   }
 }

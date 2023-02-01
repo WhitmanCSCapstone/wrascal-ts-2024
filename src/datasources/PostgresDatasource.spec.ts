@@ -1,6 +1,6 @@
 import { PlatformTest } from "@tsed/common";
-import {PostgresDataSource} from "./PostgresDatasource";
-import {DataSource} from "typeorm";
+import { PostgresDataSource } from "./PostgresDatasource";
+import { DataSource } from "typeorm";
 
 describe("PostgresDatasource", () => {
   beforeEach(PlatformTest.create);

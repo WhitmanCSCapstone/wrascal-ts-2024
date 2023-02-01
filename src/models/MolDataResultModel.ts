@@ -1,21 +1,22 @@
 import { number, object, string } from "@tsed/schema";
-import { MolData } from "../datasources/entities/MolData";
 import MolUtils from "../utils/MolUtils";
 
-export class MolDataResultModel {
+export class MolDataRawResultModel {
   id!: number;
-
+  name!: string;
+  molId!: string;
   drawCode!: string;
 
-  constructor(id: number, drawCode: string) {
-    this.id = id;
-    this.drawCode = drawCode;
-  }
-
-  public static fromRaw(raw: MolData): MolDataResultModel {
+  public static decode(raw: MolDataRawResultModel): MolDataRawResultModel {
     const drawCode = MolUtils.decode(raw.drawCode);
+    const result = new MolDataRawResultModel();
 
-    return new MolDataResultModel(raw.id, drawCode);
+    result.id = raw.id;
+    result.name = raw.name;
+    result.molId = raw.molId;
+    result.drawCode = drawCode;
+
+    return result;
   }
 }
 
