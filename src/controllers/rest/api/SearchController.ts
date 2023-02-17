@@ -58,7 +58,7 @@ export class SearchController {
   }
 
   @Post("/search/advance")
-  @Returns(400).Description("Ligands field should have at least 1 element")
+  @Returns(400).Description("Empty Post Body!")
   @Returns(200, [LigandAdvanceSearchResultModel])
     .Description("Advance search result")
     .Schema(array().items(LigandAdvanceSearchResultSchema))
@@ -70,10 +70,12 @@ export class SearchController {
     @Example(AdvanceSearchRequestExample)
     searchReq: AdvanceSearchRequestModel
   ): Promise<LigandAdvanceSearchResultModel[]> {
-    if (!ArrayUtils.any(searchReq.ligands)) throw new BadRequest("Ligands field should have at least 1 element");
+    if (!searchReq) throw new BadRequest("Empty Post Body!");
 
-    // eslint-disable-next-line
-    const ligandsStr = searchReq.ligands!.join("%");
+    const hasLigandsFilter = ArrayUtils.any(searchReq.ligands);
+    const whereQuery = `name iLike '%${searchReq?.ligands?.join("%")}%'`;
+    const limit = searchReq.limit ?? 300;
+
     let query = this.dataSource
       .getRepository(Constant)
       .createQueryBuilder()
@@ -83,12 +85,15 @@ export class SearchController {
       .addSelect("metals.charge", "metal_charge")
       .innerJoin("ligands", "ligands", "ligand_id = ligands.id")
       .innerJoin("metals", "metals", "metal_id = metals.id")
-      .where(`name iLike '%${ligandsStr}%'`);
+      .limit(limit);
+
+    if (hasLigandsFilter) query = query.where(whereQuery);
 
     if (ArrayUtils.any(searchReq.metals)) {
-      // eslint-disable-next-line
-      const metalStr = searchReq.metals!.map((m) => `'${m}'`).join(",");
-      query = query.andWhere(`central_element IN (${metalStr})`);
+      const metalStr = searchReq.metals?.map((m) => `'${m}'`).join(",");
+
+      if (hasLigandsFilter) query = query.andWhere(`central_element IN (${metalStr})`);
+      else query = query.where(`central_element IN (${metalStr})`);
     }
 
     if (ArrayUtils.any(searchReq.ligandCharges)) {

@@ -7,6 +7,7 @@ export class AdvanceSearchRequestModel {
   ligandCharges?: number[];
   metalCharges?: number[];
   chemicals?: string[];
+  limit?: number;
 
   constructor(
     ligands: string[],
@@ -14,7 +15,8 @@ export class AdvanceSearchRequestModel {
     categories: string[] = [],
     ligandCharges: number[] = [],
     metalCharges: number[] = [],
-    chemicals: string[] = []
+    chemicals: string[] = [],
+    limit: number = 100
   ) {
     this.ligands = ligands;
     this.metals = metals;
@@ -22,6 +24,7 @@ export class AdvanceSearchRequestModel {
     this.ligandCharges = ligandCharges;
     this.metalCharges = metalCharges;
     this.chemicals = chemicals;
+    this.limit = limit;
   }
 }
 
@@ -31,7 +34,8 @@ export const AdvanceSearchRequestSchema = object({
   categories: string().description(""),
   ligandCharges: number().description(""),
   metalCharges: number().description(""),
-  chemicals: string().description("")
+  chemicals: string().description(""),
+  limit: number().description("")
 });
 
-export const AdvanceSearchRequestExample = new AdvanceSearchRequestModel(["EDTA"], ["H"]);
+export const AdvanceSearchRequestExample = new AdvanceSearchRequestModel(["EDTA"], ["H"], [], [], [], [], 300);
