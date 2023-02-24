@@ -178,6 +178,7 @@ export class SearchController {
         "magnitude",
         "notes"
       ])
+      .addSelect("footnotes.legacy_identifier", "legacy_identifier")
       .addSelect("ligands.charge", "ligand_charge")
       .addSelect("(form).protonation", "protonation")
       .addSelect("metals.charge", "metal_charge")

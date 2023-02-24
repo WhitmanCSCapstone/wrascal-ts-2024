@@ -26,6 +26,7 @@ export class ConstantResultRawModel extends ConstantResultModelBase {
   products: string;
   reactants: string;
   notes: string;
+  legacy_identifier: string;
 }
 
 export const ConstantResultRawModelSchema = object({
@@ -47,7 +48,8 @@ export const ConstantResultRawModelSchema = object({
   molecular_formula: string(),
   products: string(),
   reactants: string(),
-  notes: string()
+  notes: string(),
+  legacy_identifier: string()
 });
 
 export const ConstantResultModelSchema = object({
@@ -77,6 +79,7 @@ export class ConstantResultModel extends ConstantResultModelBase {
   products: ExpressionEntry[];
   reactants: ExpressionEntry[];
   notes: Note[];
+  legacy_identifier: string;
 
   public static fromRaw(raw: ConstantResultRawModel): ConstantResultModel {
     const result = new ConstantResultModel();
@@ -101,6 +104,7 @@ export class ConstantResultModel extends ConstantResultModelBase {
     result.products = toExpressionArray(raw.products);
     result.reactants = toExpressionArray(raw.reactants);
     result.notes = toNoteArray(raw.notes);
+    result.legacy_identifier = raw.legacy_identifier;
 
     return result;
   }
