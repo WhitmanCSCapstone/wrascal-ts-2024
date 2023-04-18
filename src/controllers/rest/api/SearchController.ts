@@ -50,7 +50,9 @@ export class SearchController {
       .select(["central_element", "ligand_id", "metal_id"])
       .addSelect("ligands.name", "name")
       .addSelect("ligands.charge", "ligand_charge")
+      .addSelect("ligands.form", "form")
       .addSelect("metals.charge", "metal_charge")
+      .addSelect("metals.formula_string", "formula_string")
       .innerJoin("ligands", "ligands", "ligand_id = ligands.id")
       .innerJoin("metals", "metals", "metal_id = metals.id")
       .where(`name iLike '%${ligandsStr}%'`)
@@ -82,7 +84,9 @@ export class SearchController {
       .distinct(true)
       .select(["name", "molecular_formula", "categories", "central_element", "ligand_id", "metal_id"])
       .addSelect("ligands.charge", "ligand_charge")
+      .addSelect("ligands.form", "form")
       .addSelect("metals.charge", "metal_charge")
+      .addSelect("metals.formula_string", "formula_string")
       .innerJoin("ligands", "ligands", "ligand_id = ligands.id")
       .innerJoin("metals", "metals", "metal_id = metals.id")
       .limit(limit);
@@ -160,6 +164,7 @@ export class SearchController {
     const resultRaw = await this.dataSource
       .createQueryBuilder()
       .addCommonTableExpression(withQuery, "table_ids")
+      .distinct(true)
       .select([
         "name",
         "molecular_formula",
@@ -174,9 +179,9 @@ export class SearchController {
         "expression_string",
         "products",
         "reactants",
+        "notes",
         "direction",
-        "magnitude",
-        "notes"
+        "magnitude"
       ])
       .addSelect("footnotes.legacy_identifier", "legacy_identifier")
       .addSelect("ligands.charge", "ligand_charge")

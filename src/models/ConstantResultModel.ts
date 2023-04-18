@@ -3,6 +3,12 @@ import { ExpressionEntry, ExpressionEntrySchema, toExpressionArray } from "../da
 import { Note, NoteSchema, toNoteArray } from "../datasources/entities/Footnote";
 import { array, boolean, number, object, string } from "@tsed/schema";
 
+export class UncertaintyModel {
+  id: number;
+  direction: string;
+  magnitude: number;
+}
+
 export class ConstantResultModelBase {
   name: string;
   ligand_charge: number;
