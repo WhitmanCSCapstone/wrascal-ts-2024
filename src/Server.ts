@@ -30,12 +30,7 @@ import * as pages from "./controllers/pages/index";
     }
   ],
   middlewares: [
-    cors({
-      origin: "*",
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-      preflightContinue: false,
-      optionsSuccessStatus: 204
-    }),
+    cors(),
     cookieParser(),
     compress({}),
     methodOverride(),
