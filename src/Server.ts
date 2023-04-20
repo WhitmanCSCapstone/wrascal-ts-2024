@@ -31,15 +31,9 @@ import * as pages from "./controllers/pages/index";
   ],
   middlewares: [
     cors({
-      allowedHeaders: [
-        "Content-Type",
-        "Authorization",
-        "Access-Control-Allow-Methods",
-        "Access-Control-Request-Headers",
-        "Origin",
-        "Accept",
-        "X-Requested-With"
-      ]
+      origin: "*",
+      credentials: true,
+      optionsSuccessStatus: 200
     }),
     cookieParser(),
     compress({}),
