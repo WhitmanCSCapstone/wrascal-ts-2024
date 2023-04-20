@@ -31,9 +31,10 @@ import * as pages from "./controllers/pages/index";
   ],
   middlewares: [
     cors({
-      origin: ["https://nist-46-front.vercel.app"],
-      credentials: true,
-      optionsSuccessStatus: 200
+      origin: "*",
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      preflightContinue: false,
+      optionsSuccessStatus: 204
     }),
     cookieParser(),
     compress({}),
