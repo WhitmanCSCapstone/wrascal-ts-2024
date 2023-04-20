@@ -31,7 +31,7 @@ import * as pages from "./controllers/pages/index";
   ],
   middlewares: [
     cors({
-      origin: "*",
+      origin: ["https://nist-46-front.vercel.app"],
       credentials: true,
       optionsSuccessStatus: 200
     }),
