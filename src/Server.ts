@@ -31,8 +31,15 @@ import * as pages from "./controllers/pages/index";
   ],
   middlewares: [
     cors({
-      allowedHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Methods", "Access-Control-Request-Headers"],
-      preflightContinue: true
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "Access-Control-Allow-Methods",
+        "Access-Control-Request-Headers",
+        "Origin",
+        "Accept",
+        "X-Requested-With"
+      ]
     }),
     cookieParser(),
     compress({}),
