@@ -30,12 +30,7 @@ import * as pages from "./controllers/pages/index";
     }
   ],
   middlewares: [
-    cors({
-      preflightContinue: true,
-      optionsSuccessStatus: 200,
-      origin: "*",
-      credentials: true
-    }),
+    cors(),
     cookieParser(),
     compress({}),
     methodOverride(),
