@@ -14,3 +14,6 @@ export class Literature {
   @Column({ name: "LitCode" })
   code!: string;
 }
+
+@Entity({ name: "literatures_user_gen" })
+export class Literature_ug extends Literature {}

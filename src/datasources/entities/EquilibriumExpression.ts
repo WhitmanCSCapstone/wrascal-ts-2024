@@ -89,3 +89,6 @@ export class EquilibriumExpression {
   @Column({ name: "legacy_identifier" })
   legacyIdentifier!: string;
 }
+
+@Entity({ name: "equilibrium_expressions_user_gen" })
+export class EquilibriumExpression_ug extends EquilibriumExpression{}

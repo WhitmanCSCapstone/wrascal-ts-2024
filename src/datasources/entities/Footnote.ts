@@ -94,3 +94,6 @@ export class FootNote {
   })
   notes!: string;
 }
+
+@Entity({ name: "footnotes_user_gen" })
+export class FootNote_ug extends FootNote {}

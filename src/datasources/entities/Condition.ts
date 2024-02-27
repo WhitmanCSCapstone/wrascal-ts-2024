@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, Entity, PrimaryColumn } from "typeorm";
 
 export enum ConstantKind {
   Equilibrium = "Equilibrium",
@@ -23,3 +23,6 @@ export class Condition {
   @Column({ name: "ionic_strength" })
   ionicStrength!: number;
 }
+
+@Entity({ name: "conditions_user_gen" })
+export class Condition_ug extends Condition{}

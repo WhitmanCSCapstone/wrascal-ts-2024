@@ -20,3 +20,6 @@ export class LiteratureMapping {
   @Column({ name: "LitCodeSign" })
   codeSign!: number;
 }
+
+@Entity({ name: "Verkn_ligand_metal_literature_user_gen" }) // doesn't exist in database yet
+export class LiteratureMapping_ug extends LiteratureMapping {}

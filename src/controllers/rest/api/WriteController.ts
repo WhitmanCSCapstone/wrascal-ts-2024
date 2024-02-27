@@ -3,6 +3,8 @@ import { array, Description, Example, Post, Returns, Schema, Summary } from "@ts
 import { WRITER_DATA_SOURCE, WriterDataSource } from "../../../datasources/WriterDatasource";
 import { DataSource } from "typeorm";
 import { BodyParams } from "@tsed/platform-params";
+import { Metal_ug } from "../../../datasources/entities/Metal";
+import { Ligand_ug, LigandForm, Element, MolecularFormula, MolecularFormulaEntry } from "../../../datasources/entities/Ligand";
 // import { Metal_User_Gen } from "src/datasources/entities/Metal_user_gen.ts";}
 import { Constant } from "../../../datasources/entities/Constant";
 import { BadRequest } from "@tsed/exceptions";
@@ -27,12 +29,20 @@ export class WriteController {
         await WriterDataSource
             .createQueryBuilder()
             .insert()
-            .into("metals_user_gen")
+            .into(Metal_ug)
             .values([
-                { id: 42 , central_element: "H", formula_string: "HZn", charge: 4},
-                { id: 54, central_element: "Zn", formula_string: "oio", charge: 3}
+                { id: 42 , centralElement: Element.H, formulaString: "HZn", charge: 4},
+                { id: 54, centralElement: Element.O, formulaString: "oio", charge: 3}
+            ])
+            .createQueryBuilder()
+            .insert()
+            .into(Ligand_ug)
+            .values([
+                { id: 1, name: "miceandsmen", charge: 0, categories: ["carboxyl","glutaric"]}
             ])
             .execute()
+
+        /*molecularFormula: '{""(C,4)"",""(H,8)"",""(N,2)"",""(O,3)""}',*/
 
         return "test complete... I think?"
     }

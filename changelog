@@ -1,0 +1,16 @@
+2/26/24 - (Luke) 
+    Added a new writeController and datsource to the api. Additionally, added user_generated
+    versions to each of the entities in this thing. Comments are few and far between,
+    and none of this went down particularly easily.
+
+    Things to look into:
+        Are we sure there's no way to make another schema recognizible? I followed
+        the supabase tutorial for making and publishing a schema but none of it worked.
+        They were never actually reachable.
+
+        Desparate to make anything even remotely work, I commented out a bunch of "transformers"
+        in the /src/datasources/entities/ligand.ts file. It's probably important but I'm mad rn 
+        and don't want to put it back in.
+
+        The endpoint works right now, even if it doesn't do anyting particularly helpful.
+        

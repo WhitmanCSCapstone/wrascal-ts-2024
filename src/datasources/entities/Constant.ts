@@ -36,3 +36,6 @@ export class Constant {
   @JoinColumn()
   metals!: Metal;
 }
+
+@Entity({ name: "constants_user_gen" })
+export class Constant_ug extends Constant{}

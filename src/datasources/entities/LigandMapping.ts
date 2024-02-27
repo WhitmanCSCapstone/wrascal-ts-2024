@@ -23,3 +23,6 @@ export class LigandMapping {
   @Column({ name: "MoleculeID" })
   moleculeId!: number;
 }
+
+@Entity({ name: "ligands_mapping_user_gen" })
+export class LigandMapping_ug extends LigandMapping {}

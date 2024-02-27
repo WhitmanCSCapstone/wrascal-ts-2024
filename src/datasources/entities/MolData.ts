@@ -14,3 +14,6 @@ export class MolData {
   @Column()
   name!: string;
 }
+
+@Entity({ name: "Mol_data_user_generated" })
+export class MolData_ug extends MolData {}

@@ -238,15 +238,15 @@ export class Ligand {
 
   @Column("text", {
     name: "molecular_formula",
-    nullable: true,
-    transformer: {
-      from(value: string): MolecularFormula {
-        return MolecularFormula.fromStr(value);
-      },
-      to(value: MolecularFormula): string {
-        return MolecularFormula.toStr(value);
-      }
-    }
+    nullable: true
+    // transformer: {
+    //   from(value: string): MolecularFormula {
+    //     return MolecularFormula.fromStr(value);
+    //   },
+    //   to(value: MolecularFormula): string {
+    //     return MolecularFormula.toStr(value);
+    //   }
+    // }
   })
   molecularFormula?: string;
 
@@ -255,17 +255,20 @@ export class Ligand {
 
   @Column("text", {
     nullable: true,
-    transformer: {
-      from(value: string): LigandForm {
-        return LigandForm.fromStr(value);
-      },
-      to(value: LigandForm): string {
-        return LigandForm.toStr(value);
-      }
-    }
+    // transformer: {
+    //   from(value: string): LigandForm {
+    //     return LigandForm.fromStr(value);
+    //   },
+    //   to(value: LigandForm): string {
+    //     return LigandForm.toStr(value);
+    //   }
+    // }
   })
   form?: LigandForm;
 
   @Column("text")
   categories!: string[];
 }
+
+@Entity({ name: "ligands_user_gen" })
+export class Ligand_ug extends Ligand {}

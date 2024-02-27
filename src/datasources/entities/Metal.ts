@@ -7,7 +7,7 @@ export class Metal {
   id!: number;
 
   @Column({ name: "legacy_string" })
-  legacyString!: string;
+  legacyString?: string;
 
   @Column("enum", { name: "central_element", enum: Element })
   centralElement!: Element;
@@ -18,3 +18,6 @@ export class Metal {
   @Column()
   charge!: number;
 }
+
+@Entity({ name: "metals_user_gen" })
+export class Metal_ug extends Metal {}
