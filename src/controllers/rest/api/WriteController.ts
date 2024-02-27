@@ -8,6 +8,7 @@ import { Ligand_ug, LigandForm, Element, MolecularFormula, MolecularFormulaEntry
 // import { Metal_User_Gen } from "src/datasources/entities/Metal_user_gen.ts";}
 import { Constant } from "../../../datasources/entities/Constant";
 import { BadRequest } from "@tsed/exceptions";
+import { WriteRequestModel, WriteRequestSchema, WriteRequestExample, WriteRequestExampleSchema } from "src/models/WriteRequestModel";
 //import { Metal_User_Gen } from "src/datasources/entities/Metal_User_Gen";
 
 @Injectable()
@@ -24,25 +25,18 @@ export class WriteController {
     }
 
     @Post("/db")
-    async write(@BodyParams() input: String[]): Promise<String> {
+    async write(@BodyParams() @Schema(WriteRequestExampleSchema) input: WriteRequestExample): Promise<String> {
 
         await WriterDataSource
             .createQueryBuilder()
             .insert()
             .into(Metal_ug)
             .values([
-                { id: 42 , centralElement: Element.H, formulaString: "HZn", charge: 4},
-                { id: 54, centralElement: Element.O, formulaString: "oio", charge: 3}
-            ])
-            .createQueryBuilder()
-            .insert()
-            .into(Ligand_ug)
-            .values([
-                { id: 1, name: "miceandsmen", charge: 0, categories: ["carboxyl","glutaric"]}
+                { id: input.metal_id, formulaString: input.ligand_name, charge: 4},
             ])
             .execute()
 
-        /*molecularFormula: '{""(C,4)"",""(H,8)"",""(N,2)"",""(O,3)""}',*/
+        
 
         return "test complete... I think?"
     }
