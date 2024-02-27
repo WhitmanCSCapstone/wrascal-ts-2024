@@ -17,10 +17,10 @@ export const POSTGRES_DATA_SOURCE = Symbol.for("PostgresDataSource");
 export const PostgresDataSource = new DataSource({
   type: "postgres",
   entities: [Condition, Constant, EquilibriumExpression, FootNote, Ligand, Metal, Literature, LigandMapping, LiteratureMapping, MolData],
-  host: "complex-db-instance2.ccdzokp5bpia.us-west-2.rds.amazonaws.com",
+  host: 'aws-0-us-west-1.pooler.supabase.com',
   port: 5432,
-  username: "APACE_admin",
-  password: "NSxlXYVNQfAAFiz8SF52",
+  username: 'postgres.eauyarvlibdxezijtoyx',
+  password: 'QQDfWWErfbeYvumh',
   database: "postgres",
   schema: "public"
 });
