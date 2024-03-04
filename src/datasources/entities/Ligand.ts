@@ -187,6 +187,7 @@ export class MolecularFormula {
   }
 
   public static toStr(obj: MolecularFormula): string {
+    if (!obj) return "";
     const atomsStrArr: string[] = [];
     obj.atoms.forEach(function (atom) {
       atomsStrArr.push(`""${MolecularFormulaEntry.toStr(atom)}""`);
@@ -221,7 +222,8 @@ export class LigandForm {
   }
 
   public static toStr(obj: LigandForm): string {
-    return `("{${obj.protonation}}",${obj.charge})`;
+    if (!obj) return "";
+    return `(${obj.protonation},${obj.charge})`;
   }
 }
 
@@ -238,31 +240,31 @@ export class Ligand {
 
   @Column("text", {
     name: "molecular_formula",
-    nullable: true
-    // transformer: {
-    //   from(value: string): MolecularFormula {
-    //     return MolecularFormula.fromStr(value);
-    //   },
-    //   to(value: MolecularFormula): string {
-    //     return MolecularFormula.toStr(value);
-    //   }
-    // }
+    nullable: true,
+    transformer: {
+      from(value: string): MolecularFormula {
+        return MolecularFormula.fromStr(value);
+      },
+      to(value: MolecularFormula): string {
+        return MolecularFormula.toStr(value);
+      }
+    }
   })
-  molecularFormula?: string;
+  molecularFormula?: MolecularFormula;
 
   @Column({ nullable: true })
   charge?: number;
 
   @Column("text", {
     nullable: true,
-    // transformer: {
-    //   from(value: string): LigandForm {
-    //     return LigandForm.fromStr(value);
-    //   },
-    //   to(value: LigandForm): string {
-    //     return LigandForm.toStr(value);
-    //   }
-    // }
+    transformer: {
+      from(value: string): LigandForm {
+        return LigandForm.fromStr(value);
+      },
+      to(value: LigandForm): string {
+        return LigandForm.toStr(value);
+      }
+    }
   })
   form?: LigandForm;
 
@@ -270,5 +272,49 @@ export class Ligand {
   categories!: string[];
 }
 
+// User-generated version of ligands - variable names are correct
+
 @Entity({ name: "ligands_user_gen" })
-export class Ligand_ug extends Ligand {}
+export class Ligand_ug {
+  @PrimaryColumn()
+  id!: number;
+
+  @Column({ name: "legacy_nist46_id" })
+  legacy_nist46_id?: number;
+
+  @Column()
+  name?: string;
+
+  @Column("text", {
+    name: "molecular_formula",
+    nullable: true,
+    transformer: {
+      from(value: string): MolecularFormula {
+        return MolecularFormula.fromStr(value);
+      },
+      to(value: MolecularFormula): string {
+        return MolecularFormula.toStr(value);
+      }
+    }
+  })
+  molecular_formula?: MolecularFormula;
+
+  @Column({ name: "charge", nullable: true })
+  charge?: number;
+
+  @Column("text", {
+    nullable: true,
+    transformer: {
+      from(value: string): LigandForm {
+        return LigandForm.fromStr(value);
+      },
+      to(value: LigandForm): string {
+        return LigandForm.toStr(value);
+      }
+    }
+  })
+  form?: LigandForm;
+
+  @Column("text")
+  categories!: string[];
+}

@@ -9,7 +9,9 @@ export class Metal {
   @Column({ name: "legacy_string" })
   legacyString?: string;
 
-  @Column("enum", { name: "central_element", enum: Element })
+  @Column("enum", { 
+    name: "central_element", 
+    enum: Element})
   centralElement!: Element;
 
   @Column({ name: "formula_string" })
@@ -19,5 +21,21 @@ export class Metal {
   charge!: number;
 }
 
+// these maybe could be combined, but it might break search - do at your own risk!
 @Entity({ name: "metals_user_gen" })
-export class Metal_ug extends Metal {}
+export class Metal_ug {
+  @PrimaryColumn()
+  id!: number;
+
+  @Column({ name: "legacy_string" })
+  legacy_string?: string;
+
+  @Column("enum", { name: "central_element", enum: Element})
+  central_element!: Element;
+
+  @Column({ name: "formula_string" })
+  formula_string!: string;
+
+  @Column()
+  charge!: number;
+}

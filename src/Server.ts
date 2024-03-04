@@ -30,7 +30,7 @@ import * as pages from "./controllers/pages/index";
     }
   ],
   middlewares: [
-    cors(),
+    "cors",
     cookieParser(),
     compress({}),
     methodOverride(),
