@@ -8,7 +8,7 @@ export class Literature {
   @Column({ name: "LitID" })
   id!: number;
 
-  @Column({ name: "LItRef" })
+  @Column({ name: "LitRef" })
   reference!: string;
 
   @Column({ name: "LitCode" })

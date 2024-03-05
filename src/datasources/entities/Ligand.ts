@@ -187,6 +187,7 @@ export class MolecularFormula {
   }
 
   public static toStr(obj: MolecularFormula): string {
+    console.log("molecular_formula -> toString called!!")
     if (!obj) return "";
     const atomsStrArr: string[] = [];
     obj.atoms.forEach(function (atom) {

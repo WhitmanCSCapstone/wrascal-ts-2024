@@ -1,4 +1,4 @@
-import { Column, Entity, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 export enum ConstantKind {
   Equilibrium = "Equilibrium",
@@ -25,4 +25,19 @@ export class Condition {
 }
 
 @Entity({ name: "conditions_user_gen" })
-export class Condition_ug extends Condition{}
+export class Condition_ug {
+  @PrimaryColumn()
+  id!: number;
+
+  @Column({ name: "constant_kind", enum: ConstantKind, nullable: true })
+  constant_kind?: ConstantKind;
+
+  @Column({ name: "temperature", nullable: true})
+  temperature?: number;
+
+  @Column({ name: "temperature_varies", nullable: true })
+  temperature_varies?: boolean;
+
+  @Column({ name: "ionic_strength", nullable: true })
+  ionic_strength?: number;
+}

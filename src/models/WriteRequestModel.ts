@@ -1,5 +1,6 @@
 import { number, object, string, boolean } from "@tsed/schema";
 import { Element, MolecularFormula, LigandForm } from "../datasources/entities/Ligand";
+import { ConstantKind } from "src/datasources/entities/Condition";
 
 
 // work in progress! work out issues with things like elements and stuff
@@ -126,18 +127,18 @@ export interface metalData {
 }
   
 export interface conditionsData {
-    constant_kind: string;
-    temperature: number;
-    temperature_varies: boolean;
-    ionic_strength: number;
+    constant_kind?: ConstantKind;
+    temperature?: number;
+    temperature_varies?: boolean;
+    ionic_strength?: number;
 }
 
 export interface ligandData {
     name: string;
-    molecular_formula: MolecularFormula;
-    charge: number;
+    molecular_formula?: MolecularFormula;
+    charge?: number;
     form?: LigandForm;
-    categories: string[];
+    categories?: string[];
 
 }
   

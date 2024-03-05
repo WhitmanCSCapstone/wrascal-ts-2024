@@ -5,7 +5,7 @@ import { DataSource, QueryFailedError } from "typeorm";
 import { BodyParams } from "@tsed/platform-params";
 import { Metal_ug } from "../../../datasources/entities/Metal";
 import { Condition_ug } from "src/datasources/entities/Condition";
-import { Ligand_ug, LigandForm, Element, MolecularFormula, MolecularFormulaEntry } from "../../../datasources/entities/Ligand";
+import { Ligand_ug, LigandForm, Element, MolecularFormula, MolecularFormulaEntry, Ligand } from "../../../datasources/entities/Ligand";
 
 import { Constant } from "../../../datasources/entities/Constant";
 import { BadRequest } from "@tsed/exceptions";
@@ -13,29 +13,23 @@ import cors from "cors";
 import * as mod from "src/models/WriteRequestModel";
 
 
-enum num2Table {
+const tables: {[tableString: string]: any} =  {
     // "Mol_data":
     // "Verkn_ligand_metal_literature":
     //"conditions"
-    Condition_ug,
+    "conditions_user_gen": Condition_ug,
     // "equilibrium_expressions":
     // "equilibrium_expressions_user_gen":
     // "footnotes":
     // "ligands":
     // "ligands_mapping":
     // "ligands_mapping_user_gen":
-    Ligand_ug,
+    "ligands_user_gen": Ligand_ug,
     // "literatures":
     // "metals":
-    Metal_ug
+    "metals_user_gen": Metal_ug
     // "uncertainties":
     // "uncertainties_user_gen":
-}
-
-enum stringTable2Num {
-    "conditions_user_gen",
-    "ligands_user_gen",
-    "metals_user_gen"      
 }
 
 @Injectable()
@@ -64,8 +58,18 @@ export class WriteController {
             metalid = await this.getId('metals_user_gen', input.metalInfo);
         }
 
+        // automatic data marshalling either doesn't work for SELECT queries, or something else is up.
+        // This is a quick and easy solution.
+        const temp_ligand = {
+            "name": input.ligandInfo.name,
+            "charge": input.ligandInfo.charge,
+            "molecular_formula": MolecularFormula.toStr(input.ligandInfo.molecular_formula),
+            "form": LigandForm.toStr(input.ligandInfo.form),
+            "categories": input.ligandInfo.categories
+        };
+
         // write ligand/get id
-        var ligandid = await this.getId('ligands_user_gen', input.ligandInfo);
+        var ligandid = await this.getId('ligands_user_gen', temp_ligand);
         console.log("ligandLookup: ", ligandid);
         console.log(input.ligandInfo)
         if (!ligandid) {
@@ -91,26 +95,27 @@ export class WriteController {
     @Post("/test")
     async testBench(@BodyParams() input: mod.writeRequest): Promise<String> {
 
-        var molString = '("{""(C,2)"",""(H,5)"",""(N,1)"",""(O,2)""}",0)'
-        var mol_formula: MolecularFormula = MolecularFormula.fromStr(molString)
-        console.log(JSON.stringify(mol_formula))
+        // var molString = '("{""(C,2)"",""(H,5)"",""(N,1)"",""(O,2)""}",0)'
+        // var mol_formula: MolecularFormula = MolecularFormula.fromStr(molString)
+        // console.log(JSON.stringify(mol_formula))
 
-        input.ligandInfo.molecular_formula = mol_formula;
-        input.ligandInfo.form = LigandForm.fromStr('(1, 0)');
-        console.log(JSON.stringify(input.ligandInfo))
+        // input.ligandInfo.molecular_formula = mol_formula;
+        // input.ligandInfo.form = LigandForm.fromStr('(1, 0)');
+        // console.log(JSON.stringify(input.ligandInfo))
 
+        // we love technical debt!!!
 
-        var query = await WriterDataSource
-            .getRepository(Ligand_ug)
-            .createQueryBuilder()
-            .insert()
-            .values(input.ligandInfo)
-            .getSql()
-        console.log(query)
-
-
-       await this.writeDB('ligands_user_gen', input.ligandInfo)
-
+        await this.writeDB('ligands_user_gen', input.ligandInfo)
+        console.log("LIGANDS FUCKING WROTE")
+        // write conditions/get id
+        console.log(input.conditionsInfo)
+        await this.writeDB('conditions_user_gen', input.conditionsInfo);
+        var conditionsid = await this.getId('conditions_user_gen', input.conditionsInfo);
+        console.log("ConditionsLookup: ", conditionsid);
+        // if (!conditionsid) {
+        //     await this.writeDB('conditions_user_gen', input.conditionsInfo);
+        //     conditionsid = await this.getId('conditions_user_gen', input.conditionsInfo);
+        // }
         return "test complete!"
     }
 
@@ -120,19 +125,17 @@ export class WriteController {
     async getId(table: string, valuesCheckAgainst: {[s: string]: any}) {
         var toAppend = '';
         var retstring = '';
-        var ent = num2Table[stringTable2Num[table]]; // look up the table in the enums
         for (const key in valuesCheckAgainst)
         {
             toAppend = key.concat(" = :".concat(key.concat(" AND ")));
             retstring = retstring.concat(toAppend)
         }
         retstring = retstring.slice(0, -5);
-
         var result = null;
         try {
             result = await WriterDataSource
-                .getRepository(ent)
-                .createQueryBuilder("result")
+                .getRepository(tables[table])
+                .createQueryBuilder()
                 .where(retstring, valuesCheckAgainst)
                 .getOne()
         } catch (QueryFailedError) {
@@ -153,10 +156,8 @@ export class WriteController {
 
     // this would be a sweet method but idk how to write
     async writeDB(table: string, valuesToInsert: {[s:string]: any}) {
-        var ent = num2Table[stringTable2Num[table]];
-        console.log(ent)
         await WriterDataSource
-            .getRepository(ent)
+            .getRepository(tables[table])
             .createQueryBuilder()
             .insert()
             .values(valuesToInsert)
