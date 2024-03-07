@@ -1,7 +1,7 @@
 import { registerProvider } from "@tsed/di";
 import { DataSource } from "typeorm";
 import { Logger } from "@tsed/logger";
-import { Metal_ug } from "src/datasources/entities/Metal";
+import { Metal_ug } from "./entities/Metal";
 import { Ligand_ug } from "./entities/Ligand";
 //import { Metal_User_Gen } from "./entities/Metal_User_Gen";
 

@@ -4,14 +4,13 @@ import { WRITER_DATA_SOURCE, WriterDataSource } from "../../../datasources/Write
 import { DataSource, QueryFailedError } from "typeorm";
 import { BodyParams } from "@tsed/platform-params";
 import { Metal_ug } from "../../../datasources/entities/Metal";
-import { Condition_ug } from "src/datasources/entities/Condition";
+import { Condition_ug } from "../../../datasources/entities/Condition";
 import { Ligand_ug, LigandForm, Element, MolecularFormula, MolecularFormulaEntry, Ligand } from "../../../datasources/entities/Ligand";
 
 import { Constant } from "../../../datasources/entities/Constant";
 import { BadRequest } from "@tsed/exceptions";
 import cors from "cors";
-import * as mod from "src/models/WriteRequestModel";
-
+import * as mod from "../../../models/WriteRequestModel";
 
 const tables: {[tableString: string]: any} =  {
     // "Mol_data":
