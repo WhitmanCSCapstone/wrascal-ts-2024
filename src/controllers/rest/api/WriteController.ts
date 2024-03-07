@@ -68,8 +68,8 @@ export class WriteController {
         const temp_ligand = {
             "name": input.ligandInfo.name,
             "charge": input.ligandInfo.charge,
-            "molecular_formula": MolecularFormula.toStr(input.ligandInfo.molecular_formula),
-            "form": LigandForm.toStr(input.ligandInfo.form),
+            "molecular_formula": input.ligandInfo.molecular_formula,
+            "form": input.ligandInfo.form,
             "categories": input.ligandInfo.categories
         };
 
