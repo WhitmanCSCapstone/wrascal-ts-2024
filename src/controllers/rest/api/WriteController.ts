@@ -134,7 +134,7 @@ export class WriteController {
         var eq_expr_id = 98;
         var conditions_id = 87;
 
-        var temp_constants: Constants_ug = {
+        var temp_constants = {
             "ligand_id": ligand_id,
             "metal_id": metal_id,
             "equilibrium_expression_id": eq_expr_id,
