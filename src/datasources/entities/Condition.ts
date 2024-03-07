@@ -25,7 +25,7 @@ export class Condition {
 }
 
 @Entity({ name: "conditions_user_gen" })
-export class Condition_ug {
+export class Conditions_ug {
   @PrimaryColumn()
   id!: number;
 

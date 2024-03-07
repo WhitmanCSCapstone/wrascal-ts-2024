@@ -23,7 +23,7 @@ export class Metal {
 
 // these maybe could be combined, but it might break search - do at your own risk!
 @Entity({ name: "metals_user_gen" })
-export class Metal_ug {
+export class Metals_ug {
   @PrimaryColumn()
   id!: number;
 

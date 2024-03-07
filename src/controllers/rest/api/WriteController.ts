@@ -3,31 +3,36 @@ import { array, Description, Example, Post, Returns, Schema, string, Summary } f
 import { WRITER_DATA_SOURCE, WriterDataSource } from "../../../datasources/WriterDatasource";
 import { DataSource, QueryFailedError } from "typeorm";
 import { BodyParams } from "@tsed/platform-params";
-import { Metal_ug } from "../../../datasources/entities/Metal";
-import { Condition_ug } from "src/datasources/entities/Condition";
-import { Ligand_ug, LigandForm, Element, MolecularFormula, MolecularFormulaEntry, Ligand } from "../../../datasources/entities/Ligand";
+import { Metals_ug } from "../../../datasources/entities/Metal";
+import { Conditions_ug } from "src/datasources/entities/Condition";
+import { EquilibriumExpression_ug, ExpressionEntry } from "src/datasources/entities/EquilibriumExpression";
+import { Ligands_ug, LigandForm, Element, MolecularFormula, MolecularFormulaEntry, Ligand } from "../../../datasources/entities/Ligand";
 
 import { Constant } from "../../../datasources/entities/Constant";
 import { BadRequest } from "@tsed/exceptions";
 import cors from "cors";
 import * as mod from "src/models/WriteRequestModel";
+import { EquilibriumExpression } from "src/datasources/entities/EquilibriumExpression";
+import { equal } from "assert";
+import exp from "constants";
 
 
 const tables: {[tableString: string]: any} =  {
     // "Mol_data":
     // "Verkn_ligand_metal_literature":
     //"conditions"
-    "conditions_user_gen": Condition_ug,
+    "conditions_user_gen": Conditions_ug,
+    // "constants_user_gen": Constant_ug,
     // "equilibrium_expressions":
-    // "equilibrium_expressions_user_gen":
+    "equilibrium_expressions_user_gen": EquilibriumExpression_ug,
     // "footnotes":
     // "ligands":
     // "ligands_mapping":
     // "ligands_mapping_user_gen":
-    "ligands_user_gen": Ligand_ug,
+    "ligands_user_gen": Ligands_ug,
     // "literatures":
     // "metals":
-    "metals_user_gen": Metal_ug
+    "metals_user_gen": Metals_ug
     // "uncertainties":
     // "uncertainties_user_gen":
 }
@@ -69,7 +74,7 @@ export class WriteController {
         };
 
         // write ligand/get id
-        var ligandid = await this.getId('ligands_user_gen', temp_ligand);
+        var ligandid = await this.getId('ligands_user_gen', input.ligandInfo);
         console.log("ligandLookup: ", ligandid);
         console.log(input.ligandInfo)
         if (!ligandid) {
@@ -83,6 +88,21 @@ export class WriteController {
         if (!conditionsid) {
             await this.writeDB('conditions_user_gen', input.conditionsInfo);
             conditionsid = await this.getId('conditions_user_gen', input.conditionsInfo);
+        }
+
+        // write Equilibrium Expression data
+        var data = input.equilibriumExpressionInfo;
+        const temp_eq = {
+            "expression_string": data.expression_string,
+            "products": data.products,
+            "reactants": data.reactants
+        }
+
+        var eq_expr_id = await this.getId('equilibrium_expressions_user_gen', temp_eq);
+        console.log("eq_expr lookup: ", eq_expr_id);
+        if (!eq_expr_id) {
+            await this.writeDB('equilibrium_expressions_user_gen', input.equilibriumExpressionInfo);
+            eq_expr_id = await this.getId('equilibrium_expressions_user_gen', temp_eq);
         }
 
         // build constant query
@@ -105,17 +125,28 @@ export class WriteController {
 
         // we love technical debt!!!
 
-        await this.writeDB('ligands_user_gen', input.ligandInfo)
-        console.log("LIGANDS FUCKING WROTE")
-        // write conditions/get id
-        console.log(input.conditionsInfo)
-        await this.writeDB('conditions_user_gen', input.conditionsInfo);
-        var conditionsid = await this.getId('conditions_user_gen', input.conditionsInfo);
-        console.log("ConditionsLookup: ", conditionsid);
-        // if (!conditionsid) {
-        //     await this.writeDB('conditions_user_gen', input.conditionsInfo);
-        //     conditionsid = await this.getId('conditions_user_gen', input.conditionsInfo);
+        // write Equilibrium Expression data
+        var data = input.equilibriumExpressionInfo;
+        var exprList: string[] = [];
+        
+        console.log(typeof(input.equilibriumExpressionInfo.products))
+        data.reactants?.forEach((element) => {
+            console.log(element)
+            var asStr = ExpressionEntry.toStr(element)
+            console.log(asStr)
+            exprList.push(asStr)
+        })
+        console.log(exprList)
+
+        this.writeDB('equilibrium_expressions_user_gen', input.equilibriumExpressionInfo)
+        // var eq_expr_id = await this.getId('equilibrium_expressions_user_gen', temp_eq);
+        // console.log("eq_expr lookup: ", eq_expr_id);
+        // if (!eq_expr_id) {
+        //     await this.writeDB('equilibrium_expressions_user_gen', input.equilibriumExpressionInfo);
+        //     eq_expr_id = await this.getId('equilibrium_expressions_user_gen', temp_eq);
         // }
+
+
         return "test complete!"
     }
 

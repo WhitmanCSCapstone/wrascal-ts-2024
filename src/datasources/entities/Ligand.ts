@@ -276,7 +276,7 @@ export class Ligand {
 // User-generated version of ligands - variable names are correct
 
 @Entity({ name: "ligands_user_gen" })
-export class Ligand_ug {
+export class Ligands_ug {
   @PrimaryColumn()
   id!: number;
 

@@ -38,4 +38,31 @@ export class Constant {
 }
 
 @Entity({ name: "constants_user_gen" })
-export class Constant_ug extends Constant{}
+export class Constants_ug {
+  @Column()
+  id!: number;
+
+  @Column()
+  value?: number;
+
+  @Column({ name: "significant_figures" })
+  significant_figures?: number;
+
+  @PrimaryColumn({ name: "ligand_id" })
+  ligand_id?: number;
+
+  @Column({ name: "metal_id" })
+  metal_id?: number;
+
+  @Column({ name: "equilibrium_expression_id" })
+  equilibrium_expression_id?: number;
+
+  @Column({ name: "conditions_id" })
+  conditions_id?: number;
+
+  @Column({ name: "uncertainty_id" })
+  uncertainty_id?: number;
+
+  @Column({ name: "footnote_id" })
+  footnote_id?: number;  
+} 

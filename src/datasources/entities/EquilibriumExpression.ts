@@ -31,7 +31,7 @@ export default function ExpressionEntryParserConfig(): ColumnCommonOptions {
         value.forEach(function (obj) {
           parsedArr.push(ExpressionEntry.toStr(obj));
         });
-
+        // .join(",")
         return `{${parsedArr.join(",")}}`;
       }
     }
@@ -66,9 +66,9 @@ export class ExpressionEntry {
 
     let species = obj.species;
 
-    if (/^[A-Za-z0-9]*$/.test(obj.species)) species = `"${obj.species}"`;
+    //if (/^[A-Za-z0-9]*$/.test(obj.species)) species = `"${obj.species}"`;
 
-    return `(${species},${obj.equivalents})`;
+    return `"(${species},${obj.equivalents})"`;
   }
 }
 
@@ -91,4 +91,19 @@ export class EquilibriumExpression {
 }
 
 @Entity({ name: "equilibrium_expressions_user_gen" })
-export class EquilibriumExpression_ug extends EquilibriumExpression{}
+export class EquilibriumExpression_ug{
+  @PrimaryColumn()
+  id!: number;
+
+  @Column({ name: "expression_string" })
+  expression_string!: string;
+
+  @Column("text", ExpressionEntryParserConfig())
+  products?: ExpressionEntry[];
+
+  @Column("text", ExpressionEntryParserConfig())
+  reactants?: ExpressionEntry[];
+
+  @Column({ name: "legacy_identifier" })
+  legacyIdentifier?: string;
+}
