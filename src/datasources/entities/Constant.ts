@@ -65,4 +65,7 @@ export class Constants_ug {
 
   @Column({ name: "footnote_id" })
   footnote_id?: number;  
+
+  @Column ({ name: "user_id" })
+  user_id?: string;
 } 

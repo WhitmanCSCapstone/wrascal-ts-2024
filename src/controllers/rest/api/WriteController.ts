@@ -7,6 +7,7 @@ import { Metals_ug } from "../../../datasources/entities/Metal";
 import { Conditions_ug } from "src/datasources/entities/Condition";
 import { EquilibriumExpression_ug, ExpressionEntry } from "src/datasources/entities/EquilibriumExpression";
 import { Ligands_ug, LigandForm, Element, MolecularFormula, MolecularFormulaEntry, Ligand } from "../../../datasources/entities/Ligand";
+import { Constants_ug } from "../../../datasources/entities/Constant";
 
 import { Constant } from "../../../datasources/entities/Constant";
 import { BadRequest } from "@tsed/exceptions";
@@ -22,7 +23,7 @@ const tables: {[tableString: string]: any} =  {
     // "Verkn_ligand_metal_literature":
     //"conditions"
     "conditions_user_gen": Conditions_ug,
-    // "constants_user_gen": Constant_ug,
+    "constants_user_gen": Constants_ug,
     // "equilibrium_expressions":
     "equilibrium_expressions_user_gen": EquilibriumExpression_ug,
     // "footnotes":
@@ -56,11 +57,11 @@ export class WriteController {
         console.log(input)
 
         // write metal/ get id
-        var metalid = await this.getId('metals_user_gen', input.metalInfo);
-        console.log("metalLookup", metalid)
-        if (!metalid) {
+        var metal_id = await this.getId('metals_user_gen', input.metalInfo);
+        console.log("metalLookup", metal_id)
+        if (!metal_id) {
             await this.writeDB('metals_user_gen', input.metalInfo);
-            metalid = await this.getId('metals_user_gen', input.metalInfo);
+            metal_id = await this.getId('metals_user_gen', input.metalInfo);
         }
 
         // automatic data marshalling either doesn't work for SELECT queries, or something else is up.
@@ -74,46 +75,85 @@ export class WriteController {
         };
 
         // write ligand/get id
-        var ligandid = await this.getId('ligands_user_gen', input.ligandInfo);
-        console.log("ligandLookup: ", ligandid);
+        var ligand_id = await this.getId('ligands_user_gen', input.ligandInfo);
+        console.log("ligandLookup: ", input.ligandInfo);
         console.log(input.ligandInfo)
-        if (!ligandid) {
+        if (!ligand_id) {
             await this.writeDB('ligands_user_gen', input.ligandInfo);
-            ligandid = await this.getId('ligands_user_gen', input.ligandInfo);
+            ligand_id = await this.getId('ligands_user_gen', input.ligandInfo);
         }
 
+        console.log("made it past ligand check")
+
         // write conditions/get id
-        var conditionsid = await this.getId('conditions_user_gen', input.conditionsInfo);
-        console.log("ConditionsLookup: ", conditionsid);
-        if (!conditionsid) {
+        var conditions_id = await this.getId('conditions_user_gen', input.conditionsInfo);
+        console.log("ConditionsLookup: ", conditions_id);
+        if (!conditions_id) {
             await this.writeDB('conditions_user_gen', input.conditionsInfo);
-            conditionsid = await this.getId('conditions_user_gen', input.conditionsInfo);
+            conditions_id = await this.getId('conditions_user_gen', input.conditionsInfo);
         }
 
         // write Equilibrium Expression data
-        var data = input.equilibriumExpressionInfo;
-        const temp_eq = {
-            "expression_string": data.expression_string,
-            "products": data.products,
-            "reactants": data.reactants
-        }
-
-        var eq_expr_id = await this.getId('equilibrium_expressions_user_gen', temp_eq);
+        var eq_expr_id = await this.getId('equilibrium_expressions_user_gen', input.equilibriumExpressionInfo);
         console.log("eq_expr lookup: ", eq_expr_id);
         if (!eq_expr_id) {
             await this.writeDB('equilibrium_expressions_user_gen', input.equilibriumExpressionInfo);
-            eq_expr_id = await this.getId('equilibrium_expressions_user_gen', temp_eq);
+            eq_expr_id = await this.getId('equilibrium_expressions_user_gen', input.equilibriumExpressionInfo);
         }
 
         // build constant query
-
-
+        var temp_constants = {
+            "ligand_id": ligand_id,
+            "metal_id": metal_id,
+            "equilibrium_expression_id": eq_expr_id,
+            "value": input.constantsInfo.value,
+            "significant_figures": input.constantsInfo.significant_figures,
+            "conditions_id": conditions_id,
+            "uncertainty_id": null,
+            "footnote_id": null,
+            "user_id": null
+        }
         
+        await this.writeDB('constants_user_gen', temp_constants);
+        var constant_id = await this.getId('constants_user_gen', temp_constants);
+        console.log(constant_id)
+
+
         return "test complete... I think?"
     }
 
     @Post("/test")
     async testBench(@BodyParams() input: mod.writeRequest): Promise<String> {
+
+
+        console.log(input)
+        console.log(input.constantsInfo)
+
+        var ligand_id = 12;
+        var metal_id = 10;
+        var eq_expr_id = 98;
+        var conditions_id = 87;
+
+        var temp_constants: Constants_ug = {
+            "ligand_id": ligand_id,
+            "metal_id": metal_id,
+            "equilibrium_expression_id": eq_expr_id,
+            "value": input.constantsInfo.value,
+            "significant_figures": input.constantsInfo.significant_figures,
+            "conditions_id": conditions_id,
+            "uncertainty_id": null,
+            "footnote_id": null,
+            "user_id": null
+        }
+
+        await WriterDataSource
+            .getRepository(Constants_ug)
+            .createQueryBuilder()
+            .insert()
+            .values(temp_constants)
+            .execute()
+        
+        console.log('yippee')
 
         // var molString = '("{""(C,2)"",""(H,5)"",""(N,1)"",""(O,2)""}",0)'
         // var mol_formula: MolecularFormula = MolecularFormula.fromStr(molString)
@@ -126,19 +166,19 @@ export class WriteController {
         // we love technical debt!!!
 
         // write Equilibrium Expression data
-        var data = input.equilibriumExpressionInfo;
-        var exprList: string[] = [];
+        // var data = input.equilibriumExpressionInfo;
+        // var exprList: string[] = [];
         
-        console.log(typeof(input.equilibriumExpressionInfo.products))
-        data.reactants?.forEach((element) => {
-            console.log(element)
-            var asStr = ExpressionEntry.toStr(element)
-            console.log(asStr)
-            exprList.push(asStr)
-        })
-        console.log(exprList)
+        // console.log(typeof(input.equilibriumExpressionInfo.products))
+        // data.reactants?.forEach((element) => {
+        //     console.log(element)
+        //     var asStr = ExpressionEntry.toStr(element)
+        //     console.log(asStr)
+        //     exprList.push(asStr)
+        // })
+        // console.log(exprList)
 
-        this.writeDB('equilibrium_expressions_user_gen', input.equilibriumExpressionInfo)
+        // this.writeDB('equilibrium_expressions_user_gen', input.equilibriumExpressionInfo)
         // var eq_expr_id = await this.getId('equilibrium_expressions_user_gen', temp_eq);
         // console.log("eq_expr lookup: ", eq_expr_id);
         // if (!eq_expr_id) {

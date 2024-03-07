@@ -140,7 +140,6 @@ export interface ligandData {
     charge?: number;
     form?: LigandForm;
     categories?: string[];
-
 }
 
 export interface equilibriumExpressionData {
@@ -148,10 +147,16 @@ export interface equilibriumExpressionData {
     products?: ExpressionEntry[];
     reactants?: ExpressionEntry[];
 }
+
+export interface constantsData {
+    value?: number;
+    significant_figures?: number;
+}
   
 export interface writeRequest {
     metalInfo: metalData;
     ligandInfo: ligandData;
     conditionsInfo: conditionsData;
     equilibriumExpressionInfo: equilibriumExpressionData;
+    constantsInfo: constantsData;
 }
