@@ -99,10 +99,10 @@ export class EquilibriumExpression_ug{
   expression_string!: string;
 
   @Column("text", ExpressionEntryParserConfig())
-  products?: ExpressionEntry[];
+  products?: string;
 
   @Column("text", ExpressionEntryParserConfig())
-  reactants?: ExpressionEntry[];
+  reactants?: string;
 
   @Column({ name: "legacy_identifier" })
   legacyIdentifier?: string;

@@ -22,4 +22,22 @@ export class LiteratureMapping {
 }
 
 @Entity({ name: "Verkn_ligand_metal_literature_user_gen" }) // doesn't exist in database yet
-export class LiteratureMapping_ug extends LiteratureMapping {}
+export class LiteratureMapping_ug {
+  @PrimaryColumn({ name: "id" })
+  id!: number;
+
+  @Column({ name: "VLigandMetalLitID" })
+  VLigandMetalLitID!: number;
+
+  @Column({ name: "LigandID" })
+  LigandId!: number;
+
+  @Column({ name: "MetalID" })
+  MetalId!: number;
+
+  @Column({ name: "LitID" })
+  LiteratureId!: number;
+
+  @Column({ name: "LitCodeSign" })
+  CodeSign!: number;
+}

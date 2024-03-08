@@ -2,6 +2,8 @@ import { number, object, string, boolean } from "@tsed/schema";
 import { Element, MolecularFormula, LigandForm } from "../datasources/entities/Ligand";
 import { ConstantKind } from "src/datasources/entities/Condition";
 import { EquilibriumExpression, ExpressionEntry } from "src/datasources/entities/EquilibriumExpression";
+import { uncertaintydirection } from "src/datasources/entities/Uncertainties";
+import { Note } from "src/datasources/entities/Footnote";
 
 
 // work in progress! work out issues with things like elements and stuff
@@ -151,6 +153,21 @@ export interface equilibriumExpressionData {
 export interface constantsData {
     value?: number;
     significant_figures?: number;
+    user_id?: string;
+}
+
+export interface uncertaintiesData {
+    direction?: uncertaintydirection;
+    magnitude?: number;
+}
+
+export interface literaturesData {
+    LitRef?: string;
+    LitCode?: string;
+}
+
+export interface footnotesData {
+    notes?: Note[];
 }
   
 export interface writeRequest {
@@ -159,4 +176,7 @@ export interface writeRequest {
     conditionsInfo: conditionsData;
     equilibriumExpressionInfo: equilibriumExpressionData;
     constantsInfo: constantsData;
+    uncertaintiesInfo: uncertaintiesData;
+    literaturesInfo: literaturesData;
+    footnotesInfo: footnotesData;
 }

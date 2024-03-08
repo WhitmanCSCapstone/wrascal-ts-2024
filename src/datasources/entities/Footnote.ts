@@ -96,4 +96,28 @@ export class FootNote {
 }
 
 @Entity({ name: "footnotes_user_gen" })
-export class FootNote_ug extends FootNote {}
+export class FootNote_ug {
+  @PrimaryColumn()
+  id!: number;
+
+  @Column({ name: "legacy_identifier" })
+  legacyId?: string;
+
+  @Column("text", {
+    transformer: {
+      from(value: string): Note[] {
+        return toNoteArray(value);
+      },
+      to(value: Note[]): string {
+        const parsedArr: string[] = [];
+
+        value.forEach(function (obj) {
+          parsedArr.push(Note.toStr(obj));
+        });
+
+        return `{${parsedArr.join(",")}}`;
+      }
+    }
+  })
+  notes?: string;
+}

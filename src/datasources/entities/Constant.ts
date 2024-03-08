@@ -68,4 +68,7 @@ export class Constants_ug {
 
   @Column ({ name: "user_id" })
   user_id?: string;
+
+  @Column({ name:"timestamp" })
+  timestamp?: Date
 } 
