@@ -174,8 +174,8 @@ export class WriteController {
 
         var footnote_id = await this.getId('footnotes_user_gen', temp_footnotes);
         if (!footnote_id) {
-            this.writeDB('footnotes_user_gen', input.footnotesInfo)
-            footnote_id = this.getId('footnotes_user_gen', temp_footnotes)
+            await this.writeDB('footnotes_user_gen', input.footnotesInfo)
+            footnote_id = await this.getId('footnotes_user_gen', temp_footnotes)
         }
 
         console.log("footnote_id: ", footnote_id)
@@ -249,16 +249,16 @@ export class WriteController {
         var retstring = '';
         for (const key in valuesCheckAgainst)
         {
+            console.log(key, " , ", valuesCheckAgainst[key]);
             if (valuesCheckAgainst[key] != null) {
-                const keystring = key as string
-                retstring += keystring + " = :" + keystring + " AND "
-            } else {
-                delete valuesCheckAgainst[key]
+                retstring += key + " = :" + key + " AND "
             }
         }
+        // if at least something was put into retstring, slice the last AND off of it.
         if (retstring.length >= 5) {
             retstring = retstring.slice(0, -5);
         }
+        console.log(retstring)
         var result = null;
         try {
             result = await WriterDataSource

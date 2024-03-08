@@ -20,12 +20,12 @@ export class Literature_ug {
   @PrimaryColumn({ name: "id" })
   id!: number;
 
-  @Column({ name: "LitAlt_ID" })
+  @Column({ name: "litalt_id" })
   LitAlt_ID?: number;
 
-  @Column({ name: "LitRef" })
+  @Column({ name: "litref" })
   LitRef?: string;
 
-  @Column({ name: "LitCode" })
+  @Column({ name: "litcode" })
   LitCode?: string;
 }

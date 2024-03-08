@@ -162,8 +162,8 @@ export interface uncertaintiesData {
 }
 
 export interface literaturesData {
-    LitRef?: string;
-    LitCode?: string;
+    litref?: string;
+    litcode?: string;
 }
 
 export interface footnotesData {
